@@ -15,7 +15,7 @@
 
         <codeInsight.inlayProvider
                 implementationClass="io.github.andrelmv.plugin.inlay.InlayStringInterpolationProvider"
-                language="kotlin"/>
+                language="JAVA"/>
     </extensions>
 
     <extensions defaultExtensionNs="org.jetbrains.kotlin">

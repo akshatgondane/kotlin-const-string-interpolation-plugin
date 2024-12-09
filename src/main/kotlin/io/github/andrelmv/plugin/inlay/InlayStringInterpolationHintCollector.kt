@@ -1,5 +1,6 @@
 package io.github.andrelmv.plugin.inlay
 
+import com.google.api.Logging
 import com.intellij.codeInsight.hints.FactoryInlayHintsCollector
 import com.intellij.codeInsight.hints.InlayHintsSink
 import com.intellij.openapi.editor.Editor
@@ -23,7 +24,6 @@ class InlayStringInterpolationHintCollector(
     private val settings: InlayStringInterpolationSettings,
     editor: Editor,
 ) : FactoryInlayHintsCollector(editor) {
-
     override fun collect(
         element: PsiElement,
         editor: Editor,
@@ -36,7 +36,7 @@ class InlayStringInterpolationHintCollector(
                 ) {
                     val offset: AtomicInteger = AtomicInteger()
 
-                    if (settings.state.withStringInterpolationHint && element.isKtStringTemplateExpression()) {
+                    /*if (settings.state.withStringInterpolationHint && element.isKtStringTemplateExpression()) {
                         (element as KtStringTemplateExpression).getValue()
                             ?.let {
                                 offset.set(element.lastChild.textOffset)
@@ -53,6 +53,19 @@ class InlayStringInterpolationHintCollector(
                                 val inlayPresentation = factory.roundWithBackground(base)
                                 sink.addInlineElement(offset.get(), true, inlayPresentation, false)
                             }
+                    }*/
+                    println("MyCustomLog: " + element.text)
+
+                    if (settings.state.withStringInterpolationHint && element.text != null && element.text == "System.out") {
+                        println("TAG: " + element.text)
+                        element.lastChild?.let {
+                            println("TAG Last Child: $it")
+                            offset.set(element.lastChild.textOffset)
+                            val base = factory.text("Hello")
+                            val inlayPresentation = factory.roundWithBackground(base)
+                            sink.addInlineElement(offset.get(), true, inlayPresentation, true)
+                        }
+                        return
                     }
                 }
             }

@@ -6,6 +6,7 @@ import com.intellij.codeInsight.hints.InlayHintsProvider
 import com.intellij.codeInsight.hints.InlayHintsSink
 import com.intellij.codeInsight.hints.SettingsKey
 import com.intellij.lang.Language
+import com.intellij.lang.java.JavaLanguage
 import com.intellij.openapi.components.service
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiFile
@@ -45,7 +46,7 @@ class InlayStringInterpolationProvider : InlayHintsProvider<InlayStringInterpola
 
     override fun isLanguageSupported(
         language: Language
-    ): Boolean = language == KotlinLanguage.INSTANCE
+    ): Boolean = language == JavaLanguage.INSTANCE
 
     override fun createSettings(): InlayStringInterpolationSettings = service<InlayStringInterpolationSettings>()
 
