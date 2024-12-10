@@ -1,6 +1,5 @@
 package io.github.andrelmv.plugin.inlay
 
-import com.google.api.Logging
 import com.intellij.codeInsight.hints.FactoryInlayHintsCollector
 import com.intellij.codeInsight.hints.InlayHintsSink
 import com.intellij.openapi.editor.Editor
@@ -17,7 +16,20 @@ import org.jetbrains.kotlin.psi.KtValueArgument
 import org.jetbrains.kotlin.psi.psiUtil.isPlain
 import org.jetbrains.kotlin.psi.psiUtil.isSingleQuoted
 import java.util.concurrent.atomic.AtomicInteger
+import com.intellij.codeInsight.hints.InlayPresentationFactory
+import com.intellij.icons.AllIcons
+import java.net.URLEncoder
 
+
+fun extractFirstQuotedSubstring(input: String): String {
+    val regex = "\"(.*?)\"".toRegex()
+    val matchResult = regex.find(input)
+
+    // If a match is found, URL encode the substring inside the quotes
+    return matchResult?.groupValues?.get(1)?.let {
+        URLEncoder.encode(it, "UTF-8").replace("+", "%20")
+    } ?: ""
+}
 
 @Suppress("UnstableApiUsage")
 class InlayStringInterpolationHintCollector(
@@ -36,37 +48,56 @@ class InlayStringInterpolationHintCollector(
                 ) {
                     val offset: AtomicInteger = AtomicInteger()
 
-                    /*if (settings.state.withStringInterpolationHint && element.isKtStringTemplateExpression()) {
-                        (element as KtStringTemplateExpression).getValue()
-                            ?.let {
-                                offset.set(element.lastChild.textOffset)
-                                val base = factory.text(it)
-                                val inlayPresentation = factory.roundWithBackground(base)
-                                sink.addInlineElement(offset.get(), true, inlayPresentation, true)
-                            }
-                        return
-                    } else if (settings.state.withStringConstantHint && element.isKtNameReferenceExpression()) {
-                        (element as KtNameReferenceExpression).getValue()
-                            ?.let {
-                                offset.set(element.getReferencedNameElement().text.length + element.textOffset)
-                                val base = factory.text(it)
-                                val inlayPresentation = factory.roundWithBackground(base)
-                                sink.addInlineElement(offset.get(), true, inlayPresentation, false)
-                            }
-                    }*/
-                    println("MyCustomLog: " + element.text)
 
-                    if (settings.state.withStringInterpolationHint && element.text != null && element.text == "System.out") {
-                        println("TAG: " + element.text)
-                        element.lastChild?.let {
-                            println("TAG Last Child: $it")
-                            offset.set(element.lastChild.textOffset)
-                            val base = factory.text("Hello")
-                            val inlayPresentation = factory.roundWithBackground(base)
-                            sink.addInlineElement(offset.get(), true, inlayPresentation, true)
+                    if (settings.state.withStringInterpolationHint
+                        && element.text != null
+                        && element.text.indexOf("logger.info") == 0 && element.text.get(element.text.length - 1) == ')') {
+
+
+                        element.lastChild?.let { lastChild ->
+                            offset.set(lastChild.textOffset)
+
+                            // Define the link you want to add
+                            val queryString = extractFirstQuotedSubstring(element.text);
+                            val link =
+                                "https://app.datadoghq.com/logs?query=$queryString&agg_m=count&agg_m_source=base&agg_t=count&cols=host%2Cservice&fromUser=true&messageDisplay=inline&refresh_mode=sliding&storage=hot&stream_sort=desc&viz=stream&live=true"
+
+                            // Create the default and clicked presentations
+                            val defaultPresentation = factory.text(" Open DataDog Logs")
+                            val clickedPresentation = factory.text(" Open DataDog Logs") // You can customize this as needed
+
+                            // Define the click listener
+                            val clickListener = InlayPresentationFactory.ClickListener { _, _ ->
+                                try {
+                                    java.awt.Desktop.getDesktop().browse(java.net.URI(link))
+                                } catch (e: Exception) {
+                                    e.printStackTrace()
+                                }
+                            }
+
+                            // Load the log icon
+                            val logIcon = factory.icon(AllIcons.General.Information) // Replace with an appropriate icon
+
+                            // Add spacing before the element
+                            val spacer = factory.text("    ") // 10px space
+
+                            // Combine elements: spacer, icon, and text button
+                            val combinedPresentation = factory.seq(
+                                spacer,
+                                logIcon,
+                                factory.button(
+                                    defaultPresentation,
+                                    clickedPresentation,
+                                    clickListener,
+                                    null,
+                                    false
+                                ).first)
+                            // Add the combined presentation inline
+                            sink.addInlineElement(offset.get(), true, combinedPresentation, true)
                         }
                         return
                     }
+
                 }
             }
         )
