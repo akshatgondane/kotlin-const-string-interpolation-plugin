@@ -10,7 +10,6 @@ import com.intellij.lang.java.JavaLanguage
 import com.intellij.openapi.components.service
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiFile
-import org.jetbrains.kotlin.idea.KotlinLanguage
 
 @Suppress("UnstableApiUsage")
 class InlayStringInterpolationProvider : InlayHintsProvider<InlayStringInterpolationSettings> {

@@ -31,6 +31,17 @@ fun extractFirstQuotedSubstring(input: String): String {
     } ?: ""
 }
 
+fun checkElementText(element: PsiElement): Boolean {
+    val loggingKeywords = listOf(
+        "logger.info(", "LOGGER.debug(", "LOGGER.error(",
+        "LOG.debug(", "logger.debug(", "LOGGER.info(", "LOG.warn(", "LOG.info(", "logger.error("
+    )
+
+    return element.text?.let { text ->
+        loggingKeywords.any { text.contains(it) } && text.endsWith(")")
+    } ?: false
+}
+
 @Suppress("UnstableApiUsage")
 class InlayStringInterpolationHintCollector(
     private val settings: InlayStringInterpolationSettings,
@@ -50,10 +61,7 @@ class InlayStringInterpolationHintCollector(
 
 
                     if (settings.state.withStringInterpolationHint
-                        && element.text != null
-                        && element.text.indexOf("logger.info") == 0 && element.text.get(element.text.length - 1) == ')') {
-
-
+                        && checkElementText(element)) {
                         element.lastChild?.let { lastChild ->
                             offset.set(lastChild.textOffset)
 
@@ -63,8 +71,8 @@ class InlayStringInterpolationHintCollector(
                                 "https://app.datadoghq.com/logs?query=$queryString&agg_m=count&agg_m_source=base&agg_t=count&cols=host%2Cservice&fromUser=true&messageDisplay=inline&refresh_mode=sliding&storage=hot&stream_sort=desc&viz=stream&live=true"
 
                             // Create the default and clicked presentations
-                            val defaultPresentation = factory.text(" Open DataDog Logs")
-                            val clickedPresentation = factory.text(" Open DataDog Logs") // You can customize this as needed
+                            val defaultPresentation = factory.text("DataDog")
+                            val clickedPresentation = factory.text("DataDog") // You can customize this as needed
 
                             // Define the click listener
                             val clickListener = InlayPresentationFactory.ClickListener { _, _ ->
@@ -84,7 +92,6 @@ class InlayStringInterpolationHintCollector(
                             // Combine elements: spacer, icon, and text button
                             val combinedPresentation = factory.seq(
                                 spacer,
-                                logIcon,
                                 factory.button(
                                     defaultPresentation,
                                     clickedPresentation,
@@ -93,6 +100,7 @@ class InlayStringInterpolationHintCollector(
                                     false
                                 ).first)
                             // Add the combined presentation inline
+                            System.out.println(offset.get())
                             sink.addInlineElement(offset.get(), true, combinedPresentation, true)
                         }
                         return
