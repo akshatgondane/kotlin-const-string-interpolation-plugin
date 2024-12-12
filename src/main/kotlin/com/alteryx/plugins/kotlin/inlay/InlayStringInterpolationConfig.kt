@@ -1,4 +1,4 @@
-package io.github.andrelmv.plugin.inlay
+package com.alteryx.plugins.kotlin.inlay
 
 import com.intellij.codeInsight.hints.ChangeListener
 import com.intellij.codeInsight.hints.ImmediateConfigurable

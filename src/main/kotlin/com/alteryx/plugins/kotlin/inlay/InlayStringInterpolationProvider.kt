@@ -1,4 +1,4 @@
-package io.github.andrelmv.plugin.inlay
+package com.alteryx.plugins.kotlin.inlay
 
 import com.intellij.codeInsight.hints.ImmediateConfigurable
 import com.intellij.codeInsight.hints.InlayHintsCollector
@@ -24,19 +24,7 @@ class InlayStringInterpolationProvider : InlayHintsProvider<InlayStringInterpola
 
     override val previewText: String
         get() = """
-            const val NAME = "André"
-            const val SURNAME = "Monteiro"
-            const val FULL_NAME = "${'$'}NAME ${'$'}SURNAME"
-
-            data class User(
-                val name: String,
-                val surname: String,
-            )
-
-            val user = User(
-                name = NAME,
-                surname = SURNAME,
-            )
+            LOGGER.info("Remote job complete");
             """
 
     override fun createConfigurable(

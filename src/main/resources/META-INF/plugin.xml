@@ -1,9 +1,9 @@
 <!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
 <idea-plugin>
-    <id>io.github.andrelmv.plugin.inlay</id>
-    <name>Kotlin Constant String Interpolation</name>
-    <vendor email="andrelmv@gmail.com"
-            url="https://github.com/andrelmv/kotlin-const-string-interpolation-plugin">André Monteiro
+    <id>com.alteryx.plugins.kotlin.inlay</id>
+    <name>Datadog Inlay Hints</name>
+    <vendor email="ayx105437@alteryx.com"
+            url="https://github.com/andrelmv/kotlin-const-string-interpolation-plugin">Akshat Gondane
     </vendor>
 
     <!-- Product and plugin compatibility requirements -->
@@ -14,7 +14,7 @@
     <extensions defaultExtensionNs="com.intellij">
 
         <codeInsight.inlayProvider
-                implementationClass="io.github.andrelmv.plugin.inlay.InlayStringInterpolationProvider"
+                implementationClass="com.alteryx.plugins.kotlin.inlay.InlayStringInterpolationProvider"
                 language="JAVA"/>
     </extensions>
 

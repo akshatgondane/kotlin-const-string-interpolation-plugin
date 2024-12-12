@@ -1,4 +1,4 @@
-package io.github.andrelmv.plugin.inlay
+package com.alteryx.plugins.kotlin.inlay
 
 import com.intellij.openapi.components.BaseState
 import com.intellij.openapi.components.Service

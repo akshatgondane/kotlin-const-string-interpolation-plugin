@@ -1,4 +1,4 @@
-package io.github.andrelmv.plugin.inlay
+package com.alteryx.plugins.kotlin.inlay
 
 import com.intellij.codeInsight.hints.FactoryInlayHintsCollector
 import com.intellij.codeInsight.hints.InlayHintsSink
@@ -61,7 +61,8 @@ class InlayStringInterpolationHintCollector(
 
 
                     if (settings.state.withStringInterpolationHint
-                        && checkElementText(element)) {
+                        && checkElementText(element)
+                    ) {
                         element.lastChild?.let { lastChild ->
                             offset.set(lastChild.textOffset)
 
